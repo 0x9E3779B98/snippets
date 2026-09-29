@@ -1,77 +1,74 @@
 ## 前排劝退
-**不回答“怎么用”这种问题，建议用其他人方便易用的代码。CF代理基础知识建议到CM佬群学习。**  
-**无前端，无订阅，专注代理本身：极致直连 + 多落地协议。**  
-**订阅功能可自行搭配 [EDT](https://github.com/cmliu/edgetunnel) 或订阅器实现。**  
-**仅适合对CF节点有一定基础的同学，至少得会用节点模板修改节点信息。**  
+**不回答“怎么用”这类问题；无前端、无订阅，专注代理本身：极致直连 + 多落地协议。**  
+**仅适合对 CF 节点有一定基础的同学，至少会用节点模板修改节点信息。订阅可自行搭配 [EDT](https://github.com/cmliu/edgetunnel) 或订阅器实现。**
 
 ---
 ## 文件说明
-* **snippet.js：** ws/xhttp 双传输，vless/trojan/ss 三协议，支持 `!txt + socks5 + http + https + sstp + turn + turns + auto` 功能，此 https/turns 非完全体。  
-* **worker.js：** ws/xhttp 双传输，vless/trojan/ss 三协议，支持 `!txt + socks5 + http + https + sstp + turn + turns + auto` 功能，此 https/turns 为完全体。  
-* **https.js：** ws/xhttp 双传输，vless/ss 双协议，支持 `!txt + https + auto` 功能，此 https 为完全体。  
-* **lite.js：** ws/xhttp 双传输，vless/trojan/ss 三协议，支持 `!txt + auto` 功能，精简版，不含众多落地代理，仅 直连+proxyip 及其配套功能，冷启快，预期性能表现略好于其它三个。  
+
+| 文件 | 传输 | 协议 | 落地支持 | 备注 |
+| --- | --- | --- | --- | --- |
+| **worker.js** | ws / xhttp | vless / trojan / ss | `!txt + socks5 + http + https + sstp + turn + turns + global + auto` | 全功能，https / turns 为完全体 |
+| **snippet.js** | ws / xhttp | vless / trojan / ss | `!txt + socks5 + http + https + sstp + turn + turns + global + auto` | 同 worker.js，但 https / turns 为非完全体 |
+| **https.js** | ws / xhttp | vless / ss | `!txt + https + global + auto` | https 为完全体；无 trojan，无其它落地代理 |
+| **lite.js** | ws / xhttp | vless / trojan / ss | `!txt + auto` | 精简版，仅 直连 + proxyip，无 global、无落地代理，冷启快，性能预期略好于其它三个 |
 
 _建议：ss 用 notls。_  
-_注1：ss 单 ws，无 xhttp。_  
-_注2：~~据说5片段免费 snippet 用不了 xhttp，~~没有，无从测试，自测。_  
-_注3：代码验证基于 Pro计划 snippet，worker free。_  
+_注1：ss 仅 ws，无 xhttp。_  
+_注2：代码验证基于 Pro 计划 snippet，worker free。_
 
 ---
 ## 功能说明
-1. **!txt：** 通过后缀标记 `!txt` 支持采用 TXT 记录的域名，TXT 记录值为 proxyip 或 socks5 等协议代理，比如威廉佬维护的 [*.william.us.ci!txt](https://t.me/CMLiussss_channel/84)（点击跳转获取）。普通 A 记录的并不需要加 `!txt`，如 CM佬的。  
-2. **socks：** 略  
-3. **http：** 略  
-4. **https：** 完全体支持 `https://domain:port` 和 `https://ip:port`，ip 直接走 TlsClient，带 `!ip` 后缀标记强制走 TlsClient；非完全体仅支持 `https://domain:port`，见 [AK说明](https://t.me/Enkelte_notif/817)  
-5. **sstp：** 小日子大学的个人志愿者公益家宽，见 [AK说明](https://t.me/Enkelte_notif/819)  
-6. **turn：** 见 [AK说明](https://t.me/Enkelte_notif/805)  
-7. **turns：** turn over tls，与 https 代理情况类似。  
-8. **global：** 协议代理（socks5等）默认回落模式，`?global=1` 时改用全局模式。  
-9. **auto：** ZJ佬的自适应 cf 官方 proxyip 服务，自动根据当前位置分配对应目标机房 proxyip。`auto=1`：按 colo 分流（hkg 走 p→n→zj，其它强制 zj）；`auto=2`：全部强制走 zj；无 auto 或其它值：走 p→n→zj。  
 
-**总结：** 这些功能解决的是CF节点的落地问题，助力实现**无限家宽全球落地**。  
-**注1：** TXT 内容格式以 `,` 分隔或换行或两者混用。作用逻辑：获取域名 TXT 记录内容，取其中某个 proxyip 或协议代理使用。  
-**注2：** “cf官方反代”指可访问cf cdn内容的cf官方IP，自身位置跟随优选IP位置（未固定放置的话），目标CDN机房固定，即指定官方proxyip固定与某一个CDN机房通讯。  
+1. **!txt：** 域名加 `!txt` 后缀时，取其 TXT 记录值作为 proxyip 或协议代理（多个值以 `,` 或换行分隔，随机取一条）；普通 A 记录域名无需加。**四个文件均支持。**
+2. **socks5：** `socks5://[user:pass@]host:port`（`socks://` 同样接受）。**worker.js / snippet.js。**
+3. **http：** `http://[user:pass@]host:port`。**worker.js / snippet.js。**
+4. **https：** 完全体 `https://domain:port` 走 CF secureTransport，`https://ip:port` 与 `https://host:port!ip` 走内置 TlsClient；非完全体仅支持 `https://domain:port`。**worker.js / https.js 为完全体，snippet.js 为非完全体。**
+5. **sstp：** `sstp://[user:pass@]host:port`，默认用户密码 `vpn`。**worker.js / snippet.js。**
+6. **turn：** `turn://host:port`，默认端口 3478。**worker.js / snippet.js。**
+7. **turns：** turn over tls，默认端口 5349；完全体支持 `turns://domain:port`、`turns://ip:port` 与 `!ip` 后缀，非完全体仅 `turns://domain:port`。**worker.js 为完全体，snippet.js 为非完全体。**
+8. **global：** 协议代理（socks5 等）默认“先试直连、失败再走代理”的回落模式，`?global=1` 改为直接使用代理。**worker.js / snippet.js / https.js。**
+9. **auto：** ZJ 自适应 cf 官方 proxyip 服务，按 colo 分流：`auto=1` 时 hkg 走 `p→n→zj`、其它强制 `zj`；`auto=2` 全部强制 `zj`；无 auto 或其它值走 `p→n→zj`。**四个文件均支持。**
 
-### 路径示例
-1. **!txt：**  
-`/fdip=domain!txt?ed=2560`  
-2. **socks：**  
-`/fdip=socks5://host:port?ed=2560`  
-3. **http：**  
-`/fdip=http://host:port?ed=2560`  
-4. **https：**  
-`/fdip=https://domain:port?ed=2560`  
-`/fdip=https://ip:port?ed=2560`  
-`/fdip=https://host:port!ip?ed=2560`  
-5. **sstp：**  
-`/fdip=sstp://host:port?ed=2560`  
-6. **turn：**  
-`/fdip=turn://host:port?ed=2560`  
-7. **turns：**  
-`/fdip=turns://domain:port?ed=2560`  
-`/fdip=turns://ip:port?ed=2560`  
-`/fdip=turns://host:port!ip?ed=2560`  
-8. **global：**  
-`/fdip={1234567}?global=1&ed=2560`  
-9. **auto：**  
-`/?auto=1&ed=2560`  
-`/fdip={proxy}?auto=1&ed=2560`  
+**说明：** `p` = 路径指定的代理，`n` = 配置的 proxyip，`zj` = 按 colo 生成的 ZJ 官方 proxyip。  
+**注：** TXT 内容以 `,` 分隔、换行或两者混用；这些功能解决的是 CF 节点的落地问题。
 
-_注1：ed=2560 放在最后_  
-_注2：fdip 可以改为任意数字字母组合如 proxyip_  
+---
+## 路径示例
 
-### 节点示例
-**Vless ws/xhttp**
+路径统一为 `/{任意字母数字}=代理`（如 `/fdip=...`，`fdip` 可换成任意字母数字组合），`ed=2560` 放最后。
+
+| 用途 | 路径 | worker.js | snippet.js | https.js | lite.js |
+| --- | --- | :---: | :---: | :---: | :---: |
+| 直连 / proxyip | `/fdip=1.2.3.4:443?ed=2560` | ✓ | ✓ | ✓ | ✓ |
+| TXT 记录 | `/fdip=domain!txt?ed=2560` | ✓ | ✓ | ✓ | ✓ |
+| socks5 | `/fdip=socks5://host:port?ed=2560` | ✓ | ✓ | — | — |
+| http | `/fdip=http://host:port?ed=2560` | ✓ | ✓ | — | — |
+| https（域名） | `/fdip=https://domain:port?ed=2560` | ✓ | ✓ | ✓ | — |
+| https（IP） | `/fdip=https://ip:port?ed=2560` | ✓ | — | ✓ | — |
+| https（强制 TlsClient） | `/fdip=https://host:port!ip?ed=2560` | ✓ | — | ✓ | — |
+| sstp | `/fdip=sstp://host:port?ed=2560` | ✓ | ✓ | — | — |
+| turn | `/fdip=turn://host:port?ed=2560` | ✓ | ✓ | — | — |
+| turns（域名） | `/fdip=turns://domain:port?ed=2560` | ✓ | ✓ | — | — |
+| turns（IP / `!ip`） | `/fdip=turns://ip:port?ed=2560` | ✓ | — | — | — |
+| global | `/fdip={proxy}?global=1&ed=2560` | ✓ | ✓ | ✓ | — |
+| auto | `/?auto=1&ed=2560`、`/fdip={proxy}?auto=1&ed=2560` | ✓ | ✓ | ✓ | ✓ |
+
+---
+## 节点示例
+
+**Vless ws**
 ```ws
 vless://495c7195-85b8-498a-bf20-2ea9ce9175b5@www.shopify.com:443?path=%2Ffdip%3D1.2.3.4%3A443%3Fed%3D2560&security=tls&encryption=none&insecure=0&host=vless.snippets.cf&fp=chrome&type=ws&allowInsecure=0&sni=vless.snippets.cf#ws
 ```
+**Vless xhttp**
 ```xhttp
 vless://495c7195-85b8-498a-bf20-2ea9ce9175b5@www.shopify.com:443?mode=stream-one&path=%2Ffdip%3D1.2.3.4%3A443%3Fed%3D2560&security=tls&alpn=h2&encryption=none&insecure=0&host=vless.snippets.cf&fp=chrome&type=xhttp&allowInsecure=0&sni=vless.snippets.cf#xhttp
 ```
-**Trojan ws/xhttp**
+**Trojan ws**
 ```ws
 trojan://495c7195-85b8-498a-bf20-2ea9ce9175b5@www.shopify.com:443?path=%2Ffdip%3D1.2.3.4.%3A443%3Fed%3D2560&security=tls&insecure=0&host=trojan.snippet.cf&fp=chrome&type=ws&allowInsecure=0&sni=trojan.snippet.cf#ws
 ```
+**Trojan xhttp**
 ```xhttp
 trojan://495c7195-85b8-498a-bf20-2ea9ce9175b5@www.shopify.com:443?mode=stream-one&path=%2Ffdip%3D1.2.3.4.%3A443%3Fed%3D2560&security=tls&alpn=h2&insecure=0&host=trojan.snippet.cf&fp=chrome&type=xhttp&allowInsecure=0&sni=trojan.snippet.cf#xhttp
 ```
@@ -80,8 +77,7 @@ trojan://495c7195-85b8-498a-bf20-2ea9ce9175b5@www.shopify.com:443?mode=stream-on
 ss://YWVzLTEyOC1nY206NDk1YzcxOTUtODViOC00OThhLWJmMjAtMmVhOWNlOTE3NWI1@www.shopify.com:80?plugin=v2ray-plugin%3Bmode%3Dwebsocket%3Bhost%3Dss.snippets.cf%3Bpath%3D%2Ffdip%3D1.2.3.4%3A443%3Fed%3D2560%3Bmux%3D0#ws
 ```
 <details>
-<summary>xhttp extra</summary>
-留空 或 填入以下内容 或 自行配置，效果自测。  
+<summary>xhttp extra（留空 或 填入以下内容 或 自行配置，效果自测）</summary>
 
 ```json
 {
@@ -103,8 +99,8 @@ ss://YWVzLTEyOC1nY206NDk1YzcxOTUtODViOC00OThhLWJmMjAtMmVhOWNlOTE3NWI1@www.shopif
 
 ---
 ## 特别提醒
-**若1101请全删旧片段再部署，已有正常运行中的片段需谨慎，部署新片段会触发全部片段代码检测。**  
-**有问题请开 issue 或联系 [tg bot](https://t.me/meindmBot) 直奔主题，欢迎反馈，欢迎 PR。**  
+**若 1101 请全删旧片段再部署，已有正常运行中的片段需谨慎，部署新片段会触发全部片段代码检测。**  
+**有问题请开 issue 或联系 [tg bot](https://t.me/meindmBot) 直奔主题，欢迎反馈，欢迎 PR。**
 
 ---
 ## 鸣谢
