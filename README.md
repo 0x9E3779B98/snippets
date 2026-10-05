@@ -27,9 +27,9 @@ _注2：代码验证基于 Pro 计划 snippet，worker free。_
 6. **turn：** `turn://host:port`，默认端口 3478。**worker.js / snippet.js。**
 7. **turns：** turn over tls，默认端口 5349；完全体支持 `turns://domain:port`、`turns://ip:port` 与 `!ip` 后缀，非完全体仅 `turns://domain:port`。**worker.js 为完全体，snippet.js 为非完全体。**
 8. **global：** 协议代理（socks5 等）默认“先试直连、失败再走代理”的回落模式，`?global=1` 改为直接使用代理。**worker.js / snippet.js / https.js。**
-9. **auto：** ZJ 自适应 cf 官方 proxyip 服务，按 colo 分流：`auto=1` 时 hkg 走 `p→n→zj`、其它强制 `zj`；`auto=2` 全部强制 `zj`；无 auto 或其它值走 `p→n→zj`。**四个文件均支持。**
+9. **auto：** ZJ 自适应 cf 官方 proxyip 服务，按 colo 分流：`auto=1` 时 hkg 走 `p→e→zj`、其它强制 `zj`；`auto=2` 全部强制 `zj`；无 auto 或其它值走 `p→e→zj`。**四个文件均支持。**
 
-**说明：** `p` = 路径指定的代理，`n` = 配置的 proxyip，`zj` = 按 colo 生成的 ZJ 官方 proxyip。  
+**说明：** `p` = 路径指定的代理，`e` = 配置的 proxyip，`zj` = 按 colo 生成的 ZJ 官方 proxyip。  
 **注：** TXT 内容以 `,` 分隔、换行或两者混用；这些功能解决的是 CF 节点的落地问题。
 
 ---
