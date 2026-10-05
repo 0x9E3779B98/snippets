@@ -1,0 +1,16 @@
+# 依赖
+node_modules/
+
+# 本地状态与凭据
+.pi/
+.wrangler/
+*.log
+
+# 构建产物
+dist-*.js
+
+# 实测数据与报告
+perf-test/
+
+# 第三方参考代码（来源仓库未声明许可）
+codeB-source.js
