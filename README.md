@@ -26,7 +26,7 @@ _注2：代码验证基于 Pro 计划 snippet，worker free。_
 5. **sstp：** `sstp://[user:pass@]host:port`，默认用户密码 `vpn`。**worker.js / snippet.js。**
 6. **turn：** `turn://host:port`，默认端口 3478。**worker.js / snippet.js。**
 7. **turns：** turn over tls，默认端口 5349；完全体支持 `turns://domain:port`、`turns://ip:port` 与 `!ip` 后缀，非完全体仅 `turns://domain:port`。**worker.js 为完全体，snippet.js 为非完全体。**
-8. **global：** 协议代理（socks5 等）默认“先试直连、失败再走代理”的回落模式，`?global=1` 改为直接使用代理。**worker.js / snippet.js / https.js。**
+8. **global：** 协议代理（socks5 等）默认“先试直连、失败再走代理”的回落模式，`?global=1` 改为直接使用代理。路径内嵌 query（`/fdip={proxy}?global=1`）与 header `global: 1` 同样识别，兼容 sing-box 把 path 里的 `?` 转义成 `%3F`。**worker.js / snippet.js / https.js。**
 9. **auto：** ZJ 自适应 cf 官方 proxyip 服务，`zj` 按 colo 生成：AI 域名回落 `p`（`p` 为空则 `zj`），其它回落 `zj`；`auto=0` 关闭 `zj`，强制走 `p`（`p` 为空则 `zj`）。**四个文件均支持。**
 
 **说明：** `p` = 路径指定的代理，`zj` = 按 colo 生成的 ZJ 官方 proxyip；AI 域名 = 代码里的 `AI` 常量，目标以 IP 形式送入时用 TLS SNI 判定。  
